@@ -7,7 +7,7 @@ const dotenv = require("dotenv")
 dotenv.config()
 const rz = new Razorpay({
     key_id: process.env.RAZORPAY_API_KEY,
-    key_secret: process.env.RAZORPAY_SCERET_KEY,
+    key_secret: process.env.RAZORPAY_SECRET_KEY,
 })
 
 exports.initiatePayment = asyncHandler(async (req, res) => {
@@ -39,11 +39,11 @@ exports.createTransaction = asyncHandler(async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             return res.status(400).json({ message: "Invalid userId format" })
         }
-        if (!process.env.RAZORPAY_SCERET_KEY) {
+        if (!process.env.RAZORPAY_SECRET_KEY) {
             return res.status(500).json({ message: "Secret key is missing" })
         }
         const generatedSignature = crypto
-            .createHmac("sha256", process.env.RAZORPAY_SCERET_KEY)
+            .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
             .update(`${razorpay_order_id}|${razorpay_payment_id}`)
             .digest("hex")
         // console.log("RAZORPAY_SECRET_KEY:", process.env.RAZORPAY_SCERET_KEY)
