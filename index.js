@@ -13,7 +13,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(express.static("dist"))
 app.use(express.urlencoded({ extended: true }))
-app.use('/uploads', express.static('uploads'))
+// app.use('/uploads', express.static('uploads'))
 
 app.use("/api/auth", require("./routes/auth.route"))
 app.use("/api/photo", require("./routes/photografher.route"))
