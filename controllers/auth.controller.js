@@ -86,6 +86,66 @@ exports.registerUser = asyncHandler(async (req, res) => {
         })
     })
 })
+// exports.loginUser = asyncHandler(async (req, res) => {
+//     try {
+//         const { email, password } = req.body
+//         console.log(req.body)
+
+//         const { isError, error } = checkempty({ email, password })
+//         if (isError) {
+//             return res.status(400).json({ message: "All fields are required", error })
+//         }
+
+//         const isfound = await UserModel.findOne({ email })
+//         if (!isfound) {
+//             return res.status(400).json({ message: "Email or mobile not found" })
+//         }
+
+//         const isVerify = await bcrypt.compare(password, isfound.password)
+//         if (!isVerify) {
+//             return res.status(400).json({ message: "Password does not match" })
+//         }
+
+//         const token = jwt.sign({ userId: isfound._id }, process.env.JWT_KEY, { expiresIn: "15d" })
+
+//         if (isfound.role === "admin") {
+//             res.cookie("admin", token, {
+//                 maxAge: 1000 * 60 * 60 * 24 * 15,
+//                 httpOnly: true,
+//                 secure: process.env.NODE_ENV === "production",
+//             })
+//         } else if (isfound.role === "photographer") {
+//             res.cookie("photographer", token, {
+//                 maxAge: 1000 * 60 * 60 * 24 * 15,
+//                 httpOnly: true,
+//                 secure: process.env.NODE_ENV === "production",
+//             })
+//         } else if (isfound.role === "user") {
+//             res.cookie("user", token, {
+//                 maxAge: 1000 * 60 * 60 * 24 * 15,
+//                 httpOnly: true,
+//                 secure: process.env.NODE_ENV === "production",
+//             })
+//         }
+
+//         res.json({
+//             message: "Credentials verified successfully",
+//             result: {
+//                 _id: isfound._id,
+//                 name: isfound.name,
+//                 email: isfound.email,
+//                 mobile: isfound.mobile,
+//                 profilePicture: isfound.profilePicture,
+//                 role: isfound.role,
+//             }
+//         })
+//     } catch (error) {
+//         console.log(error)
+//         return res.status(500).json({ message: "Internal server error" })
+//     }
+// })
+
+
 exports.loginUser = asyncHandler(async (req, res) => {
     try {
         const { email, password } = req.body
@@ -108,24 +168,20 @@ exports.loginUser = asyncHandler(async (req, res) => {
 
         const token = jwt.sign({ userId: isfound._id }, process.env.JWT_KEY, { expiresIn: "15d" })
 
+        const cookieOptions = {
+            maxAge: 1000 * 60 * 60 * 24 * 15,  // 15 days
+            httpOnly: true,  // Ensures the cookie is not accessible via JavaScript
+            secure: true,    // Ensure cookies are only sent over HTTPS
+            sameSite: 'None', // Required for cross-origin requests (like in production)
+        }
+
+        // Set the cookie based on the user role
         if (isfound.role === "admin") {
-            res.cookie("admin", token, {
-                maxAge: 1000 * 60 * 60 * 24 * 15,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-            })
+            res.cookie("admin", token, cookieOptions)
         } else if (isfound.role === "photographer") {
-            res.cookie("photographer", token, {
-                maxAge: 1000 * 60 * 60 * 24 * 15,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-            })
+            res.cookie("photographer", token, cookieOptions)
         } else if (isfound.role === "user") {
-            res.cookie("user", token, {
-                maxAge: 1000 * 60 * 60 * 24 * 15,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-            })
+            res.cookie("user", token, cookieOptions)
         }
 
         res.json({
@@ -144,6 +200,7 @@ exports.loginUser = asyncHandler(async (req, res) => {
         return res.status(500).json({ message: "Internal server error" })
     }
 })
+
 exports.logoutUser = asyncHandler(async (req, res) => {
     try {
         const { role } = req.body
