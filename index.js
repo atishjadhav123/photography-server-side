@@ -25,12 +25,6 @@ app.use("/api/booking", require("./routes/booking.route"))
 app.use("*", (req, res) => {
     res.status(404).json({ message: `route not found ${req.method}:${req.url}` })
 })
-app.get('/', (req, res) => {
-    res.send({
-        activeStatus: true,
-        error: false
-    })
-})
 
 app.use("*", (req, res) => {
     res.sendFile(path.join(__dirname, "dist", "index.html"))
