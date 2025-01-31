@@ -7,7 +7,7 @@ const cors = require("cors")
 const app = express()
 
 
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+app.use(cors({ credentials: true, origin: "https://photography-website-frount.vercel.app" }));
 
 app.use(express.json())
 app.use(cookieParser())
