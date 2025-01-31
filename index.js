@@ -7,7 +7,7 @@ const cors = require("cors")
 const app = express()
 
 
-app.use(cors({ credentials: true, origin: "https://photography-website-frount.vercel.app" }));
+app.use(cors({ credentials: true, origin: true }))
 
 app.use(express.json())
 app.use(cookieParser())
@@ -35,8 +35,8 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: "Server Error", error: err.message })
 });
 
-mongoose.connect(process.env.MONGO_URL);
+mongoose.connect(process.env.MONGO_URL)
 mongoose.connection.once("open", () => {
-    console.log("mongo connected");
+    console.log("mongo connected")
     app.listen(process.env.PORT, console.log("server running"))
 });
